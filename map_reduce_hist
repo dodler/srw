@@ -1,0 +1,71 @@
+library("bmp");
+library("pixmap");
+
+write_to_files <- function(vector, block_size){
+	blocks=as.array(split(vector, 1:block_size));
+	print(length(blocks));
+	for(j in 1:length(blocks)){
+		name=paste("output", j,"#");
+		write.table(blocks[j], paste(name, ".csv"));
+	}
+	
+}
+
+#method reads from file vector and returns it
+#assumed that previously vector(s) was(were) written by write_to_files method
+#or with write.table basic method of r
+read_block <- function(file){
+
+	block<-as.matrix(as.vector(read.table(file)));
+	return (block);
+}
+
+#method maps a single block of data read from file
+#assumed that firstly it was written by write_to_files
+#and than read by read_block
+handle_block <- function(block){
+	min_value<- min(block);
+	max_value<- max(block);
+	res<-matrix(nrow=max_value-min_value+1, ncol=2);
+	j=1;
+	for(i in min_value:max_value){
+		res[j,1]<-i;
+		res[j,2]<- length(block[block==i]);
+		j=j+1;
+	}
+	return (res);
+}
+
+#method merges block2 to block1
+#order of calls
+#write_to_files -> read_blocks -> handle_block
+merge_block <- function(block1, block2){
+	size1<-nrow(block1);
+	size2<-nrow(block2);
+	result<-matrix(nrow=(size1+size2), ncol=2);
+	print(nrow(result));
+	class_path="/media/artem/385BE95714C3BE20/IdeaProjects/Custom/out/production/srw";
+	.jinit()
+	.jaddClassPath(class_path);
+	RMethods <- J("lian/artyom/RMethods");
+	instance <- .jnew("lian/artyom/RMethods");
+
+	.jcall("lian/artyom/RMethods", returnSig="V","mergeMaps",as.integer(block1[1,]), as.integer(block1[2,]), as.integer(block2[1,]), as.integer(block2[2,]));
+}
+
+library(rJava);
+bmp_file <- read.bmp("pic/test.bmp");
+#bmp_file <- read.bmp("pic/tes.png");
+rgb_map <- pixmapRGB(bmp_file);
+hist(rgb_map@red); # color map
+hist(rgb_map@blue);
+hist(rgb_map@green);
+levels_map <- pixmapGrey(bmp_file);
+hist(levels_map@grey);
+
+#write_to_files(bmp_file, 20);
+block <- read_block("output 20 # .csv");
+block2 <- read_block("output 1 # .csv");
+b1<-handle_block(block);
+b2<-handle_block(block2);
+merge_block(b1, b2);

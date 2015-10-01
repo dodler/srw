@@ -1,0 +1,7 @@
+class_path="/media/artem/385BE95714C3BE20/IdeaProjects/Custom/out/production/srw";
+.jinit();
+.jaddClassPath(class_path);
+RMethods <- J("lian/artyom/RMethods");
+instance <- .jnew("lian/artyom/RMethods");
+
+mapres=RMethods$mergeMaps(integer(10),integer(10),integer(10),integer(10));

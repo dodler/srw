@@ -27,7 +27,12 @@ public class RMethods
 
     public static void main(String[] args)
     {
-        cropAndHandleImage("test.bmp", 15);
+        if (args.length == 5)
+        {
+            cropAndHandleImage(args[0], args[1], args[2], args[3], Integer.valueOf(args[4]));
+        }else{
+            System.out.println("Not enough arguments to launch.");
+        }
     }
 
 //    private static final Logger log = Logger.getLogger(RMethods.class);
@@ -105,13 +110,17 @@ public class RMethods
         return result1;
     }
 
-    public static String getName(int i, String basename, String format, String delimiter)
+    public static String getName(int i, String dir, String name, String format, String delimiter)
     {
         StringBuilder sb = new StringBuilder();
-        sb.append(basename);
+        sb.append(dir);
+        sb.append("/");
+        sb.append(name);
         sb.append(delimiter);
         sb.append(i);
+        sb.append(".");
         sb.append(format);
+	System.out.println(sb.toString());
         return sb.toString();
     }
 
@@ -119,9 +128,12 @@ public class RMethods
      * method splits source image several rectangular parts
      *
      * @param img    source image root
+     * @param dir directory where output data will bewritten
+     * @param name name of output file chunk
+     * @param format format of output chunk
      * @param length number of chunks to be craeted
      */
-    public static void cropAndHandleImage(String img, int length)
+    public static void cropAndHandleImage(String img, String dir, String name, String format, int length)
     {
         try
         {
@@ -135,7 +147,12 @@ public class RMethods
 //                ImageIO.write(image.getSubimage(0, i* size, image.getWidth(), size), "bmp",new File(getName(i)));
                 BufferedImage img1 = image.getSubimage(0, i * size, image.getWidth(), size);
                 long cnt = 0;
-                BufferedWriter writer = new BufferedWriter(new FileWriter(new File(getName(i + 1, "pic/output ", " .csv", "# "))));
+//                BufferedWriter writer = new BufferedWriter(new FileWriter(new File(getName(i + 1, "pic/output ", " .csv", "# "))))
+		File file = new File(getName(i + 1, dir, name, format, "#"));
+		if (!file.exists()){
+			file.createNewFile();
+		}
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
                 writer.write("X" + (i + 1) + "\n");
                 for (int k = 0; k < img1.getWidth(); k++)
                 {
@@ -146,7 +163,7 @@ public class RMethods
                         sb.append(cnt++);
                         sb.append("\"");
                         sb.append(" ");
-                        sb.append((-1) * img1.getRGB(k, l));
+                        sb.append(img1.getRGB(k, l));
                         sb.append("\n");
                         writer.write(sb.toString());
                     }
@@ -165,11 +182,11 @@ public class RMethods
 
     public static Result mapBlock(int[] key)
     {
-        System.out.println("map start");
+//        System.out.println("map start");
         Result result = new Result();
-        System.out.println("created output");
+//        System.out.println("created output");
         HashMap<Integer, Integer> map = new HashMap<>();
-        System.out.println("created map");
+//        System.out.println("created map");
         for (int i = 0; i < key.length; i++)
         {
             if (map.containsKey(key[i]))
@@ -180,7 +197,7 @@ public class RMethods
                 map.put(key[i], 1);
             }
         }
-        System.out.println("mapping finished");
+//        System.out.println("mapping finished");
         int i = 0;
         result.key = new int[map.entrySet().size()];
         result.value = new int[map.entrySet().size()];
@@ -189,8 +206,13 @@ public class RMethods
             result.key[i] = e.getKey();
             result.value[i++] = e.getValue();
         }
-        System.out.println("rseult unloaded");
+//        System.out.println("rseult unloaded");
         return result;
+    }
+
+    public static void buildHist(int[] values, int[]dencities)
+    {
+
     }
 
     public void test()
@@ -203,3 +225,4 @@ public class RMethods
         System.out.println("param=" + param);
     }
 }
+

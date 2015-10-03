@@ -1,5 +1,6 @@
 library("bmp");
 library("pixmap");
+library(rJava);
 
 write_to_files <- function(vector, block_size){
 	blocks=as.array(split(vector, 1:block_size));
@@ -11,8 +12,11 @@ write_to_files <- function(vector, block_size){
 	
 }
 
+dir="out"; # not used now
+filaname="output";
+
 get_name <- function(number){
-	name <- paste("output", "#",number, ".csv");
+	name <- paste("out/output", "#",number, ".csv", sep="");
 	return (name);
 }
 
@@ -30,33 +34,24 @@ read_block <- function(file){
 #assumed that firstly it was written by write_to_files
 #and than read by read_block
 handle_block <- function(block){
-	print("handle_block");
-	min_value<- min(block);
-	max_value<- max(block);
-	print(min_value);
-	print(max_value);
+	print(block);
 	res<-matrix(nrow=length(block), ncol=2);
-	print(nrow(res));
-	print("matrix created");
 	for(i in 1:length(block)){
 		print(i);
 		res[i,1]<-block[i];
 		res[i,2]<- length(block[block==i]);
 	}
-	print("returing value");
 	return (res);
 }
 
 map_block <- function (block){
-	print("map block");	
-	print(typeof(block));
-	#block[is.na(block)] <- 0;
-	#print(block[is.na(block)]);
-	res <- matrix(nrow=length(block), ncol=2);
-	#RMethods$mapBlock(integer(10));
-	map <- RMethods$mapBlock(block);
+	#print("map block");	;
+	block2 <- as.integer(block);
+	map <- RMethods$mapBlock(block2);
+	#print(length(map$key));
+	res <- matrix(nrow=length(map$key), ncol=2);
 	res[,1] <- map$key;
-	res[,2] <- map$result;
+	res[,2] <- map$value;
 	return (res);
 }
 
@@ -64,23 +59,18 @@ map_block <- function (block){
 #order of calls
 #write_to_files -> read_blocks -> handle_block
 merge_block <- function(block1, block2){
-#	print("merge_block");
-#	print("inp types");
-#	print(typeof(block1));
-#	print(typeof(block2));
-#	print(block1);
-
 	result <- RMethods$mergeMaps(block1[,1],block1[,2],block2[,1],block2[,2]);
-	block <- matrix(nrow=nrow(block1), ncol=ncol(block1));
+	#print(nrow(block1));
+	#print(length(result$key));
+	#print(length(result$value));
+	block <- matrix(nrow=length(result$key), ncol=2);
 	block[,1] <- result$key;
 	block[,2] <- result$value;
 	return (block);
 }
 
-
-pic_size<-15;
-
-library(rJava);
+args <- commandArgs(trailingOnly=TRUE);
+pic_size<-as.numeric(args[1]);
 
 class_path="/media/artem/385BE95714C3BE20/IdeaProjects/Custom/out/production/srw";
 .jinit();
@@ -88,7 +78,7 @@ class_path="/media/artem/385BE95714C3BE20/IdeaProjects/Custom/out/production/srw
 RMethods <- J("lian/artyom/RMethods");
 instance <- .jnew("lian/artyom/RMethods");
 
-bmp_file <- read.bmp("pic/test.bmp");
+bmp_file <- read.bmp("pic/test8bit.bmp");
 #bmp_file <- read.bmp("pic/tes.png");
 rgb_map <- pixmapRGB(bmp_file);
 #hist(rgb_map@red); # color map
@@ -113,21 +103,23 @@ for(i in 1:pic_size){
 	print(i);
 	#print(length(read_block(get_name(i))));
 	v <- read_block(get_name(i));
-	blocks[,i] <- c(v, numeric(init_block_size-length(v)));
-	#blocks[is.na(blocks)] <- 0;
+	#blocks[,i] <- c(v, numeric(init_block_size-length(v)));
+	#print(length(v));
+	blocks[,i]<-v;
 }
 
 #first_block  <- handle_block(initial_block);
 first_block <- map_block(initial_block);
-print(nrow(first_block));
-print(ncol(first_block));
 
 for(i in 1:pic_size){
-	print(i);
+	#print(i);
 	#first_block <- merge_block(first_block, handle_block(blocks[,i]));
-	first_block <- merge_block(first_block, map_block(block[,i]));
+	first_block <- merge_block(first_block, map_block(blocks[,i]));
 }
-#print(first_block);
+write.table(first_block, "output.txt");
+jpeg(filename="plot.jpeg", width=1600, height=1600);
 plot(first_block[,1], first_block[,2]);
+dev.off();
+jpeg(filename="hist.jpeg", width=1600, height=1600);
 hist(first_block[,2]);
-#merge_block(b1, b2);
+dev.off();

@@ -118,7 +118,7 @@ for(i in 1:pic_size){
 }
 write.table(first_block, "output.txt");
 jpeg(filename="plot.jpeg", width=1600, height=1600);
-plot(first_block[,1], first_block[,2]);
+plot(first_block[,1], first_block[,2], type="h");
 dev.off();
 jpeg(filename="hist.jpeg", width=1600, height=1600);
 hist(first_block[,2]);

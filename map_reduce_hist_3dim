@@ -1,0 +1,116 @@
+library("bmp");
+library("pixmap");
+library(rJava);
+
+write_to_files <- function(vector, block_size){
+	blocks=as.array(split(vector, 1:block_size));
+	print(length(blocks));
+	for(j in 1:length(blocks)){
+		name=get_name(j);;
+		write.table(blocks[j], name);
+	}
+	
+}
+
+dir="out"; # not used now
+filaname="output";
+
+get_name <- function(number){
+	name <- paste("out/output", "#",number, ".csv", sep="");
+	return (name);
+}
+
+
+#method reads from file vector and returns it
+#assumed that previously vector(s) was(were) written by write_to_files method
+#or with write.table basic method of r
+#in file color are stored 
+#only colors, mapping is implemented in java
+read_block <- function(file){
+	block<-as.matrix(as.vector(read.table(file)));
+	return (block);
+}
+
+#method reads image from file as matrix of colors
+read_block_as_matrix <- function(file){
+	block <- as.matrix(read.table(file));
+	return (block);
+}
+
+# block should be matrix of colors
+# than this matrix is proceed to jvm
+# where map-reduce is proceed
+# than all blocks of data should be merged in one
+# resulting maps keep data in Tuple object.
+# for more info about Tuple - look at RMethods class
+map_block <- function (block){	
+	map <- RMethods$map3Dim(block);
+	res <- matrix(nrow=length(map$key), ncol=2);
+	res[,1] <- map$tuples;
+	res[,2] <- map$values;
+	return (res);
+}
+
+#method merges block2 to block1
+#order of calls
+merge_block <- function(block1, block2){
+	result <- RMethods$merge3DimBlock(block1[,1], block2[,2]);
+	#result <- RMethods$mergeMaps(block1[,1],block1[,2],block2[,1],block2[,2]);
+	#block <- matrix(nrow=length(result$key), ncol=2);
+	#block[,1] <- result$key;
+	#block[,2] <- result$value;
+	#TODO(remove commentary)
+	#return (block);
+	return (result);
+}
+
+
+#main logic starts here
+
+args <- commandArgs(trailingOnly=TRUE);
+pic_size<-as.numeric(args[1]);
+
+class_path="/media/artem/385BE95714C3BE20/[R]src/hist/java/";
+.jinit();
+.jaddClassPath(class_path);
+RMethods <- J("lian/artyom/RMethods");
+instance <- .jnew("lian/artyom/RMethods");
+
+bmp_file <- read.bmp("pic/test8bit.bmp");
+rgb_map <- pixmapRGB(bmp_file);
+levels_map <- pixmapGrey(bmp_file);
+
+# map reduce logic starts here
+print("started reading");
+
+initial_block <- read_block(get_name(1))
+print(nrow(initial_block));
+print(ncol(initial_block));
+block_list <- list(initial_block);
+for(i in 2:pic_size){
+	block_list[[i]] <- read_block_as_matrix(get_name(i));
+	#reading all blocs, because they have to be merged than
+}
+
+print("reading finished");
+print("started mapping");
+
+first_block <- map_block(initial_block);
+
+for(i in 1:pic_size-1){
+	first_block <- merge_block(first_block, map_block(block_list[[i]]));
+}
+print("mapping finished");
+
+View(first_block);
+
+# map reduce logic finishes here
+# todo refactor to one function
+# todo create visualization of dat hist
+#write.table(first_block, "output.txt");
+#jpeg(filename="plot.jpeg", width=1600, height=1600);
+#plot(first_block[,1], first_block[,2], type="h");
+#dev.off();
+#jpeg(filename="hist.jpeg", width=1600, height=1600);
+#hist(first_block[,2]);
+#dev.off();

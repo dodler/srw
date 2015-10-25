@@ -58,8 +58,9 @@ public class ImageMapper extends Thread
         for (Map.Entry entry : map.entrySet())
         {
             result.tuples[i] = (Tuple) entry.getKey();
-            result.values[i] = (Integer) entry.getValue();
+            result.values[i++] = (Integer) entry.getValue();
         }
+	System.out.println("mapReduce:packing results:total number" + map.entrySet().size());
         return result;
     }
 

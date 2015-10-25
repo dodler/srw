@@ -23,12 +23,13 @@ public class MapMerger
     /**
      * target is merge of both - source and target
      */
-    private Result3D target, source, result;
+    private Result3D target, source;
 
     public MapMerger(Result3D source, Result3D target)
     {
         this.source = source;
         this.target = target;
+	prepareMerge();
     }
 
     public void setTarget(Result3D target)
@@ -38,17 +39,28 @@ public class MapMerger
 
     public Result3D getResult()
     {
-        return result;
+        return source;
+    }
+   
+    private Map<Tuple, Integer> map;// = new HashMap<>();
+ 
+    /** this method fills map of objects with given source result
+    */
+    public void prepareMerge()
+    {	
+	map = new HashMap<>();
+        for (int i = 0; i < source.tuples.length; i++)
+	{
+	    map.put(source.tuples[i], source.values[i]);
+	}
     }
 
+    /**
+    * this method merges target result into source, note, that at first you should launch prepareMerge method, 
+    * otherwise a npe will be thrown
+    */
     public void merge()
     {
-        Map<Tuple, Integer> map = new HashMap<>();
-        for (int i = 0; i < source.tuples.length; i++)
-        {
-            map.put(source.tuples[i], source.values[i]);
-        }
-
         for (int i = 0; i < target.tuples.length; i++)
         {
             if (map.containsKey(target.tuples[i]))
@@ -62,14 +74,14 @@ public class MapMerger
             }
         }
 
-        Result3D result = new Result3D(map.entrySet().size());
         int i = 0;
+	source = new Result3D(map.entrySet().size());
         for (Map.Entry entry : map.entrySet())
         {
-            result.tuples[i] = (Tuple) entry.getKey();
-            result.values[i] = (Integer) entry.getValue();
+            source.tuples[i] = (Tuple) entry.getKey();
+            source.values[i++] = (Integer) entry.getValue();
         }
-
-        this.result = result;
+	prepareMerge();
+	System.out.println("merge finished:total number:" + source.tuples.length);
     }
 }

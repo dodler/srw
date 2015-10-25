@@ -133,7 +133,7 @@ public class RMethods
 
     public static void main(String[] args)
     {
-        String img = "test8bit.bmp";
+        String img = "pic/test8bit.bmp";
         int length = 25;
 //        build3DimHist(args[0], Integer.valueOf(args[1]));
         build3DimHist(img, length);
@@ -466,6 +466,7 @@ public class RMethods
 
     public static void build3DimHist(String bitmap, int length)
     {
+	long startTime = System.currentTimeMillis();
         BufferedImage[] images = null;
         try
         {
@@ -480,7 +481,8 @@ public class RMethods
         }
         ExecutorService services = Executors.newCachedThreadPool();
 
-        length = 2; // TODO for test remove later
+//length = 5; // TODO remove later that is for testes
+
         Result3D[] results = new Result3D[length];
         ImageMapper[] mappers = new ImageMapper[length];
         for (int i = 0; i < length; i++)
@@ -515,14 +517,9 @@ public class RMethods
             merger.merge();
         }
         Result3D finalResult = merger.getResult();
-        for (int i = 0; i < finalResult.tuples.length; i++)
-        {
-            System.out.print("tuple:");
-            System.out.println(finalResult.tuples[i]);
-            System.out.print("value:");
-            System.out.println(finalResult.values[i]);
-        }
-
+	System.out.println("finished");
+	System.out.println("number of resulted tuples:" + finalResult.tuples.length);
+	System.out.println("time elapsed (ms):" + (System.currentTimeMillis()-startTime));
     }
 
     public void test()

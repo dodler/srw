@@ -1,5 +1,7 @@
 package lian.artyom;
 
+import org.jfree.ui.RefineryUtilities;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -48,25 +50,62 @@ public class RMethods
             return result;
         }
 
+        private EqualityOperation operation;
+
         @Override
         public boolean equals(Object tuple)
         {
             if (!tuple.getClass().equals(Tuple.class)) return false;
 
-            return (
-                    (((Tuple) tuple).x == this.x) &&
-                            (((Tuple) tuple).y == this.y) &&
-                            (((Tuple) tuple).z == this.z)
-            );
+            return operation.equals(this, tuple);
+        }
+
+        public void setOperation(EqualityOperation operation)
+        {
+            this.operation = operation;
         }
 
         public Tuple()
         {
-
+            this.operation = CHECK_COORDINATES_WITH_ORDER;
         }
+
+        public static final EqualityOperation CHECK_COORDINATES_WITHOUT_ORDER = new EqualityOperation()
+        { // default check operation checks if all coordinates are equal
+            // order of coordinates should be equal
+            @Override
+            public boolean equals(Object tuple1, Object tuple2)
+            {
+                Tuple t1, t2;
+                try
+                {
+                    t1 = (Tuple) tuple1;
+                    t2 = (Tuple) tuple2;
+                } catch (ClassCastException e)
+                {
+                    return false;
+                }
+                return (t1.z == t2.z);
+            }
+        };
+
+        public static final EqualityOperation CHECK_COORDINATES_WITH_ORDER = new EqualityOperation()
+        { // default check operation checks if all coordinates are equal
+            // order of coordinates should be equal
+            @Override
+            public boolean equals(Object tuple1, Object tuple2)
+            {
+                return (
+                        (((Tuple) tuple1).x == ((Tuple) tuple2).x) &&
+                                (((Tuple) tuple1).y == ((Tuple) tuple2).y) &&
+                                (((Tuple) tuple1).z == ((Tuple) tuple2).z)
+                );
+            }
+        };
 
         public Tuple(int z, int x, int y)
         {
+            this();
             this.z = z;
             this.x = x;
             this.y = y;
@@ -133,10 +172,10 @@ public class RMethods
 
     public static void main(String[] args)
     {
-        String img = "pic/test8bit.bmp";
-        int length = 25;
-//        build3DimHist(args[0], Integer.valueOf(args[1]));
+        String img = "test28bit.bmp";
+        int length = 4;
         build3DimHist(img, length);
+
     }
 
     public static void testStatic(int[] valus)
@@ -372,7 +411,7 @@ public class RMethods
             int size = 0;
             BufferedImage image = ImageIO.read(new File(img));
 
-            size = (int) image.getHeight() / length - 1;
+            size = image.getHeight() / length - 1;
 
             for (int i = 0; i < length; i++)
             {
@@ -431,6 +470,7 @@ public class RMethods
         for (int i = 0; i < length; i++)
         {
             images[i] = image.getSubimage(0, i * size, image.getWidth(), size);
+            System.out.println(images[i].getHeight());
         }
         return images;
     }
@@ -466,7 +506,7 @@ public class RMethods
 
     public static void build3DimHist(String bitmap, int length)
     {
-	long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         BufferedImage[] images = null;
         try
         {
@@ -481,8 +521,7 @@ public class RMethods
         }
         ExecutorService services = Executors.newCachedThreadPool();
 
-//length = 5; // TODO remove later that is for testes
-
+//        length = 6;
         Result3D[] results = new Result3D[length];
         ImageMapper[] mappers = new ImageMapper[length];
         for (int i = 0; i < length; i++)
@@ -517,9 +556,14 @@ public class RMethods
             merger.merge();
         }
         Result3D finalResult = merger.getResult();
-	System.out.println("finished");
-	System.out.println("number of resulted tuples:" + finalResult.tuples.length);
-	System.out.println("time elapsed (ms):" + (System.currentTimeMillis()-startTime));
+        RMethodsTest test = new RMethodsTest("Test for 3Dim hist");
+        test.test3DimHist(finalResult);
+        test.pack();
+        RefineryUtilities.centerFrameOnScreen(test);
+        test.setVisible(true);
+        System.out.println("finished");
+        System.out.println("number of resulted tuples:" + finalResult.tuples.length);
+        System.out.println("time elapsed (ms):" + (System.currentTimeMillis() - startTime));
     }
 
     public void test()

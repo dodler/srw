@@ -60,7 +60,7 @@ public class ImageMapper extends Thread
             result.tuples[i] = (Tuple) entry.getKey();
             result.values[i++] = (Integer) entry.getValue();
         }
-	System.out.println("mapReduce:packing results:total number" + map.entrySet().size());
+        System.out.println("mapReduce:packing results:total number" + map.entrySet().size());
         return result;
     }
 
@@ -79,7 +79,6 @@ public class ImageMapper extends Thread
     {
         System.out.println("Thread#" + this.getId() + "started.");
         result = mapReduce();
-        System.out.println("Thread#" + this.getId() + "finished mapping.");
     }
 
     public Result3D getResult()

@@ -109,9 +109,9 @@ public class RMethodsTest extends ApplicationFrame
         Map<Integer, Integer> resultMap = new HashMap<>();
         for (int i = 0; i < result.tuples.length; i++)
         {
-            if (resultMap.containsKey(result.tuples[i]))
+            if (resultMap.containsKey(result.tuples[i].z)
             {
-                resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
+                resultMap.put(result.tuples[i].z, resultMap.get(result.tuples[i]) + result.values[i]);
             } else
             {
                 resultMap.put(result.tuples[i], result.values[i]);

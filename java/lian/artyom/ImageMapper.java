@@ -35,11 +35,13 @@ public class ImageMapper extends Thread
         {
             for (int j = 0; j < image.getHeight(); j++)
             {
-                for (int m = 0; m < image.getWidth(); m++)
+                for (int m = j; m < image.getHeight(); m++)
                 {
-                    for (int n = 0; n < image.getHeight(); n++)
+		    if (m == j) continue;
+                    for (int n = i; n < image.getWidth(); n++)
                     {
-                        Tuple t = new Tuple(image.getRGB(i, j), image.getRGB(m, j), image.getRGB(i, n));
+			if (n==i) continue;
+                        Tuple t = new Tuple(image.getRGB(i, j), image.getRGB(i,m), image.getRGB(n,j));
                         if (map.containsKey(t))
                         {
                             map.put(t, map.get(t) + 1); // increasing tuple counter by 1

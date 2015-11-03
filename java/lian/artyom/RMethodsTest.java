@@ -93,14 +93,45 @@ public class RMethodsTest extends ApplicationFrame
 
         for (Map.Entry<Tuple, Integer> entry : resultMap.entrySet())
         {
-            Tuple key = entry.getKey();
-            colors.add((double) key.z, entry.getValue());
+            colors.add((double) entry.getKey().z, entry.getValue());
+	    System.out.println(entry.getValue());
         }
+	System.out.println("ready to build plot");
         dataset.addSeries(colors);
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(chartPanel);
+    }
 
+    public void test23DimHist(Result3D result)
+    {
+        Map<Integer, Integer> resultMap = new HashMap<>();
+        for (int i = 0; i < result.tuples.length; i++)
+        {
+            if (resultMap.containsKey(result.tuples[i]))
+            {
+                resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
+            } else
+            {
+                resultMap.put(result.tuples[i], result.values[i]);
+            }
+        }
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        XYSeries colors = new XYSeries("Colors");
+
+        System.out.println("new size:" + resultMap.entrySet().size());
+
+        for (Map.Entry<Tuple, Integer> entry : resultMap.entrySet())
+        {
+            colors.add((double) entry.getKey().z, entry.getValue());
+	    System.out.println(entry.getValue());
+        }
+	System.out.println("ready to build plot");
+        dataset.addSeries(colors);
+        final JFreeChart chart = createChart(dataset);
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        setContentPane(chartPanel);
     }
 }

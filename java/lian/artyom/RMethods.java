@@ -2,6 +2,8 @@ package lian.artyom;
 
 import org.jfree.ui.RefineryUtilities;
 
+import java.awt.*;
+import javax.swing.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -95,11 +97,16 @@ public class RMethods
             @Override
             public boolean equals(Object tuple1, Object tuple2)
             {
-                return (
-                        (((Tuple) tuple1).x == ((Tuple) tuple2).x) &&
-                                (((Tuple) tuple1).y == ((Tuple) tuple2).y) &&
-                                (((Tuple) tuple1).z == ((Tuple) tuple2).z)
-                );
+                Tuple t1, t2;
+                try
+                {
+                    t1 = (Tuple) tuple1;
+                    t2 = (Tuple) tuple2;
+                } catch (ClassCastException e)
+                {
+                    return false;
+                }
+                return ((t1.z == t2.z) && (t1.x==t2.x) && (t1.y == t2.y));
             }
         };
 
@@ -172,8 +179,10 @@ public class RMethods
 
     public static void main(String[] args)
     {
-        String img = "test28bit.bmp";
-        int length = 4;
+        //String img = "../pic/test1.bmp";
+        //String img = "../pic/test_double.bmp";
+        String img = "/home/dodler/Документы/hist[R]/srw/java/pic/test_mono_2.png";
+        int length = 1;
         build3DimHist(img, length);
 
     }
@@ -464,14 +473,14 @@ public class RMethods
     public static BufferedImage[] loadImageAndCrop(String bitmap, int length) throws IOException
     {
         BufferedImage image = ImageIO.read(new File(bitmap));
-        int size = image.getHeight() / length - 1;
+        int size = image.getHeight() / length-1;
         BufferedImage[] images = new BufferedImage[length];
 
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < length-1; i++)
         {
             images[i] = image.getSubimage(0, i * size, image.getWidth(), size);
-            System.out.println(images[i].getHeight());
         }
+	images[length-1]=image.getSubimage(0, image.getHeight()-size-1, image.getWidth(), size);
         return images;
     }
 
@@ -547,7 +556,7 @@ public class RMethods
             }
         }
 
-        MapMerger merger = new MapMerger(results[0], results[1]);
+/*        MapMerger merger = new MapMerger(results[0], results[1]);
         merger.merge();
 
         for (int i = 2; i < results.length; i++)
@@ -555,15 +564,25 @@ public class RMethods
             merger.setTarget(results[i]);
             merger.merge();
         }
-        Result3D finalResult = merger.getResult();
+
+        Result3D finalResult = merger.getResult();*/
+	Result3D finalResult = results[0];
+	int sum=0;
+	for(int i = 0; i<finalResult.tuples.length; i++){
+	    sum += finalResult.values[i];
+	}
+        System.out.println("finished");
+        System.out.println("number of resulted tuples:" + finalResult.tuples.length);
+	System.out.println("total pixel numer:" + sum);
+	System.out.println("sqrt total pixel numer:" + Math.sqrt(sum));
+        System.out.println("time elapsed (ms):" + (System.currentTimeMillis() - startTime));
+	System.out.println("Testing");
         RMethodsTest test = new RMethodsTest("Test for 3Dim hist");
         test.test3DimHist(finalResult);
         test.pack();
         RefineryUtilities.centerFrameOnScreen(test);
         test.setVisible(true);
-        System.out.println("finished");
-        System.out.println("number of resulted tuples:" + finalResult.tuples.length);
-        System.out.println("time elapsed (ms):" + (System.currentTimeMillis() - startTime));
+
     }
 
     public void test()

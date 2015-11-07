@@ -16,7 +16,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lian.artyom.RMethods.*;
+import static lian.artyom.RMethods.Result3D;
+import static lian.artyom.RMethods.Tuple;
 
 /**
  * Created by artem on 27.10.15.
@@ -58,6 +59,7 @@ public class RMethodsTest extends ApplicationFrame
         plot.setRangeGridlinePaint(Color.white);
 
         final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        renderer.setSeriesShape(0, new Rectangle(2, 2));
         renderer.setSeriesLinesVisible(0, false);
         renderer.setSeriesShapesVisible(1, false);
         plot.setRenderer(renderer);
@@ -94,7 +96,6 @@ public class RMethodsTest extends ApplicationFrame
         for (Map.Entry<Tuple, Integer> entry : resultMap.entrySet())
         {
             colors.add((double) entry.getKey().z, entry.getValue());
-	    System.out.println(entry.getValue());
         }
 	System.out.println("ready to build plot");
         dataset.addSeries(colors);
@@ -109,12 +110,20 @@ public class RMethodsTest extends ApplicationFrame
         Map<Integer, Integer> resultMap = new HashMap<>();
         for (int i = 0; i < result.tuples.length; i++)
         {
-            if (resultMap.containsKey(result.tuples[i].z)
+            if (resultMap.containsKey(result.tuples[i].x))
             {
-                resultMap.put(result.tuples[i].z, resultMap.get(result.tuples[i]) + result.values[i]);
+                resultMap.put(result.tuples[i].x, resultMap.get(result.tuples[i].x) + result.values[i]);
             } else
             {
-                resultMap.put(result.tuples[i], result.values[i]);
+                resultMap.put(result.tuples[i].x, result.values[i]);
+            }
+        }
+
+        for (int i = 0; i < result.tuples.length; i++) {
+            if (resultMap.containsKey(result.tuples[i].y)) {
+                resultMap.put(result.tuples[i].y, resultMap.get(result.tuples[i].y) + result.values[i]);
+            } else {
+                resultMap.put(result.tuples[i].y, result.values[i]);
             }
         }
         XYSeriesCollection dataset = new XYSeriesCollection();
@@ -122,12 +131,39 @@ public class RMethodsTest extends ApplicationFrame
 
         System.out.println("new size:" + resultMap.entrySet().size());
 
+        for (Map.Entry<Integer, Integer> entry : resultMap.entrySet()) {
+            colors.add((double) entry.getKey(), entry.getValue());
+        }
+
+        System.out.println("ready to build plot");
+        dataset.addSeries(colors);
+        final JFreeChart chart = createChart(dataset);
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        setContentPane(chartPanel);
+    }
+
+    public void testHist(Result3D result) {
+        Map<Tuple, Integer> resultMap = new HashMap<>();
+        for (int i = 0; i < result.tuples.length; i++) {
+            if (resultMap.containsKey(result.tuples[i])) {
+                resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
+            } else {
+                resultMap.put(result.tuples[i], result.values[i]);
+            }
+        }
+
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        XYSeries colors = new XYSeries("Colors");
+
+        System.out.println("new size:" + resultMap.entrySet().size());
+
         for (Map.Entry<Tuple, Integer> entry : resultMap.entrySet())
         {
-            colors.add((double) entry.getKey().z, entry.getValue());
-	    System.out.println(entry.getValue());
+            colors.add(entry.getKey().z, entry.getValue());
         }
-	System.out.println("ready to build plot");
+
+        System.out.println("ready to build plot");
         dataset.addSeries(colors);
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);

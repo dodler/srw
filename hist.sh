@@ -1,7 +1,7 @@
 rm out
 mkdir out
 cd java
-
+// TODO rewrite java code launching
 javac -cp lib/hamcrest-core-1.3.jar:lib/jcommon-1.0.23.jar:lib/jfreechart-1.0.19.jar lian/artyom/*.java
 #javac -cp 'lib/*.jar' lian/artyom/*.java
 #cd ..

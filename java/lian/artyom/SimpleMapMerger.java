@@ -3,8 +3,7 @@ package lian.artyom;
 import java.util.HashMap;
 import java.util.Map;
 
-import static lian.artyom.RMethods.Result3D;
-import static lian.artyom.RMethods.Tuple;
+import static lian.artyom.RMethods.Result;
 
 /**
  * class that perform merge of two resuls of mapping
@@ -14,39 +13,39 @@ import static lian.artyom.RMethods.Tuple;
  * TODO migrate to R
  * Created by artem on 22.10.15.
  */
-public class MapMerger {
-    private MapMerger() {
+public class SimpleMapMerger {
+    private SimpleMapMerger() {
 
     }
 
     /**
      * target is merge of both - source and target
      */
-    private Result3D target, source;
+    private Result target, source;
 
-    public MapMerger(Result3D source, Result3D target) {
+    public SimpleMapMerger(Result source, Result target) {
         this.source = source;
         this.target = target;
         prepareMerge();
     }
 
-    public void setTarget(Result3D target) {
+    public void setTarget(Result target) {
         this.target = target;
     }
 
-    public Result3D getResult() {
+    public Result getResult() {
         return source;
     }
 
-    private Map<Tuple, Integer> map;// = new HashMap<>();
+    private Map<Integer, Integer> map;// = new HashMap<>();
 
     /**
      * this method fills map of objects with given source result
      */
     public void prepareMerge() {
         map = new HashMap<>();
-        for (int i = 0; i < source.tuples.length; i++) {
-            map.put(source.tuples[i], source.values[i]);
+        for (int i = 0; i < source.key.length; i++) {
+            map.put(source.key[i], source.value[i]);
         }
     }
 
@@ -55,23 +54,23 @@ public class MapMerger {
      * otherwise a npe will be thrown
      */
     public void merge() {
-        for (int i = 0; i < target.tuples.length; i++) {
-            if (map.containsKey(target.tuples[i])) {
+        for (int i = 0; i < target.key.length; i++) {
+            if (map.containsKey(target.key[i])) {
                 // incrementing by value from target map
-                map.put(target.tuples[i], map.get(target.tuples[i]) + target.values[i]);
+                map.put(target.key[i], map.get(target.key[i]) + target.value[i]);
             } else {
                 // putting new value
-                map.put(target.tuples[i], target.values[i]);
+                map.put(target.key[i], target.value[i]);
             }
         }
 
         int i = 0;
-        source = new Result3D(map.entrySet().size());
+        source = new Result(map.entrySet().size());
         for (Map.Entry entry : map.entrySet()) {
-            source.tuples[i] = (Tuple) entry.getKey();
-            source.values[i++] = (Integer) entry.getValue();
+            source.key[i] = (Integer) entry.getKey();
+            source.value[i++] = (Integer) entry.getValue();
         }
         prepareMerge();
-        System.out.println("merge finished:total number:" + source.tuples.length);
+        System.out.println("merge finished:total number:" + source.key.length);
     }
 }

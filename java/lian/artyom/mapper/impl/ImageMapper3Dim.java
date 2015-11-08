@@ -1,5 +1,6 @@
 package lian.artyom.mapper.impl;
 
+import lian.artyom.RMethods;
 import lian.artyom.mapper.ImageMapper;
 
 import java.util.HashMap;
@@ -22,7 +23,9 @@ public class ImageMapper3Dim extends ImageMapper {
      *
      * @return
      */
-    protected void mapReduce() {
+    public void mapReduce() {
+
+        System.out.println("image size = " + image.length);
 
         Map<Tuple, Integer> map = new HashMap<>();
 
@@ -50,16 +53,35 @@ public class ImageMapper3Dim extends ImageMapper {
             result.tuples[i] = (Tuple) entry.getKey();
             result.values[i++] = (Integer) entry.getValue();
         }
-        System.out.println("mapReduce:packing results:total number" + map.entrySet().size());
+        System.out.println("mapReduce:packing results:total number" + result.tuples.length);
+    }
+
+    @Override
+    public Result3D getResult() {
+        return this.result;
     }
 
     @Override
     public void run() {
+        System.out.println("runnig");
         mapReduce();
     }
 
     private int startX, startY, size;
 
+    private ImageMapper3Dim(){};
+
+    /**
+     * only available contructor
+     * warning, if height and width parameters or int do not correspond to real image,
+     * u will recieve runtime exception, array out of bounds or something like this
+     * @param startX x point, where image processing starts from
+     * @param startY y point, where image processing starts from
+     * @param size number of pixels by axy to be processed
+     * @param image source image packed in integer 2dim array
+     * @param height height of image, can be extracted from Image type
+     * @param width width of image
+     */
     public ImageMapper3Dim(int startX, int startY, int size, int[][] image, int height, int width) {
         this.startX = startX;
         this.startY = startY;
@@ -67,9 +89,5 @@ public class ImageMapper3Dim extends ImageMapper {
         this.image = image;
         this.width = width;
         this.height = height;
-    }
-
-    public Result3D getResult() {
-        return result;
     }
 }

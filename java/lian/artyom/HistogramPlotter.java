@@ -11,6 +11,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -22,13 +23,22 @@ import static lian.artyom.RMethods.Tuple;
 /**
  * Created by artem on 27.10.15.
  */
-public class RMethodsTest extends ApplicationFrame
+public class HistogramPlotter extends ApplicationFrame
 {
 
-    public RMethodsTest(String title)
+    private Result3D result;
+
+    public HistogramPlotter(String title)
     {
         super(title);
     }
+
+    public HistogramPlotter(String title, Result3D result)
+    {
+        this(title);
+        this.result = result;
+    }
+
 
     private JFreeChart createChart(final XYDataset dataset)
     {
@@ -73,82 +83,48 @@ public class RMethodsTest extends ApplicationFrame
 
     }
 
+    public void setResult(Result3D result)
+    {
+        if (this.result == null)
+        {
+            this.result = null;
+        }
+    }
 
-    public void test3DimHist(Result3D result)
+    public void plot(byte TYPE)
+    {
+        switch (TYPE)
+        {
+            case HistogramBuilder.MAPPER_1_DIM:
+                build1DimHist();
+                return;
+            case HistogramBuilder.MAPPER_2_DIM:
+                throw new RuntimeException("not implemented yet");
+            case HistogramBuilder.MAPPER_3_DIM:
+                build3DimHist();
+        }
+        pack();
+        RefineryUtilities.centerFrameOnScreen(this);
+        setVisible(true);
+    }
+
+    private void build3DimHist()
+    {
+        Result3D tempResult = RMethodsUtils.sumResult3D(result);
+        this.result = tempResult;
+        build1DimHist();
+    }
+
+    private void build1DimHist()
     {
         Map<Tuple, Integer> resultMap = new HashMap<>();
         for (int i = 0; i < result.tuples.length; i++)
         {
-            result.tuples[i].setOperation(Tuple.CHECK_COORDINATES_WITHOUT_ORDER);
             if (resultMap.containsKey(result.tuples[i]))
             {
                 resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
             } else
             {
-                resultMap.put(result.tuples[i], result.values[i]);
-            }
-        }
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries colors = new XYSeries("Colors");
-
-        System.out.println("new size:" + resultMap.entrySet().size());
-
-        for (Map.Entry<Tuple, Integer> entry : resultMap.entrySet())
-        {
-            colors.add((double) entry.getKey().z, entry.getValue());
-        }
-	System.out.println("ready to build plot");
-        dataset.addSeries(colors);
-        final JFreeChart chart = createChart(dataset);
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
-        setContentPane(chartPanel);
-    }
-
-    public void test23DimHist(Result3D result)
-    {
-        Map<Integer, Integer> resultMap = new HashMap<>();
-        for (int i = 0; i < result.tuples.length; i++)
-        {
-            if (resultMap.containsKey(result.tuples[i].x))
-            {
-                resultMap.put(result.tuples[i].x, resultMap.get(result.tuples[i].x) + result.values[i]);
-            } else
-            {
-                resultMap.put(result.tuples[i].x, result.values[i]);
-            }
-        }
-
-        for (int i = 0; i < result.tuples.length; i++) {
-            if (resultMap.containsKey(result.tuples[i].y)) {
-                resultMap.put(result.tuples[i].y, resultMap.get(result.tuples[i].y) + result.values[i]);
-            } else {
-                resultMap.put(result.tuples[i].y, result.values[i]);
-            }
-        }
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        XYSeries colors = new XYSeries("Colors");
-
-        System.out.println("new size:" + resultMap.entrySet().size());
-
-        for (Map.Entry<Integer, Integer> entry : resultMap.entrySet()) {
-            colors.add((double) entry.getKey(), entry.getValue());
-        }
-
-        System.out.println("ready to build plot");
-        dataset.addSeries(colors);
-        final JFreeChart chart = createChart(dataset);
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
-        setContentPane(chartPanel);
-    }
-
-    public void testHist(Result3D result) {
-        Map<Tuple, Integer> resultMap = new HashMap<>();
-        for (int i = 0; i < result.tuples.length; i++) {
-            if (resultMap.containsKey(result.tuples[i])) {
-                resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
-            } else {
                 resultMap.put(result.tuples[i], result.values[i]);
             }
         }
@@ -163,7 +139,6 @@ public class RMethodsTest extends ApplicationFrame
             colors.add(entry.getKey().z, entry.getValue());
         }
 
-        System.out.println("ready to build plot");
         dataset.addSeries(colors);
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);

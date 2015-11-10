@@ -92,10 +92,8 @@ public class HistogramBuilder {
         System.out.println("time elapsed (ms):" + (System.currentTimeMillis() - startTime));
         System.out.println("Testing");
 
-        RMethodsTest test = new RMethodsTest("Test for 3Dim hist");
-        test.testHist(finalResult);
-        test.pack();
-        RefineryUtilities.centerFrameOnScreen(test);
-        test.setVisible(true);
+        HistogramPlotter test = new HistogramPlotter("Test for 3Dim hist", finalResult);
+
+        test.plot(HistogramBuilder.MAPPER_3_DIM);
     }
 }

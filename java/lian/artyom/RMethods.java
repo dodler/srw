@@ -113,23 +113,6 @@ public class RMethods {
 
     ;
 
-    public static void testTupleHash() {
-        Tuple x1 = new Tuple(0, 0, 0);
-        Tuple x2 = new Tuple(0, 1, 0);
-        Tuple x3 = new Tuple(1, 3, 0);
-        Tuple x5 = new Tuple(1, 3, 4);
-        Tuple x4 = new Tuple(0, 0, 0);
-
-        Map testMap = new HashMap<Tuple, Integer>(5);
-        testMap.put(x1, 1);
-
-        System.out.println("map contains x4:");
-        System.out.println(testMap.containsKey(x4));
-        System.out.println("map contains x1:");
-        System.out.println(testMap.containsKey(x1));
-
-    }
-
     /**
      * container for tuples
      */
@@ -177,10 +160,11 @@ public class RMethods {
     //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_mono_2.png";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_mono.bmp";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_double.bmp";
-    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test8bit.bmp";
+    private static final String imgPath = "/media/artem/385BE95714C3BE20/IdeaProjects/Custom/hist/srw/pic/test8bit.bmp";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/Volunteer_Park_Blues.jpg";
 
     public static void main(String[] args) throws IOException {
-        new HistogramBuilder(50, imgPath).build(HistogramBuilder.MAPPER_1_DIM);
+//        new HistogramBuilder(50, imgPath).build(HistogramBuilder.MAPPER_1_DIM);
+        new HistogramBuilder(50, imgPath).build(HistogramBuilder.MAPPER_3_DIM);
     }
 }

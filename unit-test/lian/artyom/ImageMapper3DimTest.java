@@ -152,40 +152,7 @@ public class ImageMapper3DimTest
         {
             throw new RuntimeException(e);
         }
-        Result3D result = mapper.getResult();
-
-        Map<Tuple, Integer> preFinalResult = new HashMap<>();
-        for (int i = 0; i < result.values.length; i++)
-        {
-            result.tuples[i].y = 0;
-            if (preFinalResult.containsKey(result.tuples[i]))
-            {
-                preFinalResult.put(result.tuples[i], preFinalResult.get(result.tuples[i]) + result.values[i]);
-            } else
-            {
-                preFinalResult.put(result.tuples[i], result.values[i]);
-            }
-        }
-        Map<Tuple, Integer> finalResult = new HashMap<>();
-        for (Map.Entry<Tuple, Integer> entry : preFinalResult.entrySet())
-        {
-            entry.getKey().x = 0;
-            if (finalResult.containsKey(entry.getKey()))
-            {
-                finalResult.put(entry.getKey(), finalResult.get(entry.getKey()) + entry.getValue());
-            } else
-            {
-                finalResult.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        Result3D finalResult3D = new Result3D(finalResult.size());
-        int i = 0; boolean checked=true;
-        for (Map.Entry<Tuple, Integer> entry : preFinalResult.entrySet())
-        {
-            finalResult3D.tuples[i] = entry.getKey();
-            finalResult3D.values[i++] = entry.getValue();
-        }
+        Result3D result = RMethodsUtils.sumResult3D(mapper.getResult());
 
         assert (testResult41Dim.equals(result));
     }

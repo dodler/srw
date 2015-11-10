@@ -1,6 +1,7 @@
 package lian.artyom.mapper.impl;
 
 import lian.artyom.RMethods;
+import lian.artyom.RMethodsUtils;
 import lian.artyom.mapper.ImageMapper;
 
 import java.util.HashMap;
@@ -14,7 +15,8 @@ import static lian.artyom.RMethods.Tuple;
  * method perform map reduce operation for chunk of image in multithread
  * Created by artem on 22.10.15.
  */
-public class ImageMapper3Dim extends ImageMapper {
+public class ImageMapper3Dim extends ImageMapper
+{
 
     private Result3D result;
 
@@ -23,19 +25,26 @@ public class ImageMapper3Dim extends ImageMapper {
      *
      * @return
      */
-    public void mapReduce() {
+    public void mapReduce()
+    {
         Map<Tuple, Integer> map = new HashMap<>();
 
-        for (int i = 0; i < width; i++) {
-            for (int j = startY; j < startY + size; j++) {
-                for (int m = 0; m < height; m++) {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = startY; j < startY + size; j++)
+            {
+                for (int m = 0; m < height; m++)
+                {
                     if (m == j) continue;
-                    for (int n = 0; n < width; n++) {
+                    for (int n = 0; n < width; n++)
+                    {
                         if (n == i) continue;
                         Tuple t = new Tuple(image[i][j], image[i][m], image[n][j]);
-                        if (map.containsKey(t)) {
+                        if (map.containsKey(t))
+                        {
                             map.put(t, map.get(t) + 1); // increasing tuple counter by 1
-                        } else {
+                        } else
+                        {
                             map.put(t, 1); // putting new value to map
                         }
                     }
@@ -46,38 +55,53 @@ public class ImageMapper3Dim extends ImageMapper {
 
         result = new Result3D(map.entrySet().size());
         int i = 0;
-        for (Map.Entry entry : map.entrySet()) {
+        for (Map.Entry entry : map.entrySet())
+        {
             result.tuples[i] = (Tuple) entry.getKey();
             result.values[i++] = (Integer) entry.getValue();
+        }
+
+        Result3D result2 = RMethodsUtils.sumResult3D(result);
+        for (int j = 0; j < result2.tuples.length; j++)
+        {
+            System.out.println(result2.tuples[j] + ", n=" + result2.values[j]);
         }
     }
 
     @Override
-    public Result3D getResult() {
+    public Result3D getResult()
+    {
         return this.result;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         mapReduce();
     }
 
     private int startX, startY, size;
 
-    private ImageMapper3Dim(){};
+    private ImageMapper3Dim()
+    {
+    }
+
+    ;
 
     /**
      * only available contructor
      * warning, if height and width parameters or int do not correspond to real image,
      * u will recieve runtime exception, array out of bounds or something like this
+     *
      * @param startX x point, where image processing starts from
      * @param startY y point, where image processing starts from
-     * @param size number of pixels by axy to be processed
-     * @param image source image packed in integer 2dim array
+     * @param size   number of pixels by axy to be processed
+     * @param image  source image packed in integer 2dim array
      * @param height height of image, can be extracted from Image type
-     * @param width width of image
+     * @param width  width of image
      */
-    public ImageMapper3Dim(int startX, int startY, int size, int[][] image, int height, int width) {
+    public ImageMapper3Dim(int startX, int startY, int size, int[][] image, int width, int height)
+    {
         this.startX = startX;
         this.startY = startY;
         this.size = size;

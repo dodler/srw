@@ -40,7 +40,6 @@ public class RMethods {
             result = prime * result + x;
             result = prime * result + y;
 
-//            System.out.println("hash return:" + result);
             return result;
         }
 
@@ -98,6 +97,7 @@ public class RMethods {
             this.y = y;
         }
 
+        @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("(");

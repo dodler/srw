@@ -9,7 +9,6 @@ public abstract class ImageMapper extends Thread {
 
     protected int[][] image;
     protected int height, width;
-    protected Result3D result;
 
     protected abstract void mapReduce();
 

@@ -44,7 +44,6 @@ public class ImageMapper1Dim extends ImageMapper {
             result.tuples[i] = (RMethods.Tuple) entry.getKey();
             result.values[i++] = (Integer) entry.getValue();
         }
-        System.out.println("mapReduce:packing results:total number" + result.tuples.length);
     }
 
     @Override

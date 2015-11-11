@@ -2,7 +2,6 @@ package lian.artyom;
 
 import lian.artyom.mapper.ImageMapper;
 import lian.artyom.mapper.ImageMapperFactory;
-import org.jfree.ui.RefineryUtilities;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,7 +37,7 @@ public class HistogramBuilder {
     }
 
     public void build(byte MAPPER_TYPE) throws IOException {
-
+        this.MAPPER_TYPE = MAPPER_TYPE;
         long startTime = System.currentTimeMillis();
         image = ImageIO.read(new File(imgPath));
 
@@ -72,15 +71,21 @@ public class HistogramBuilder {
             }
         }
 
-        MapMerger merger = new MapMerger(results[0], results[1]);
-        merger.merge();
-
-        for (int i = 2; i < results.length; i++) {
-            merger.setTarget(results[i]);
+        MapMerger merger;
+        Result3D finalResult;
+        if (results.length > 1) {
+            merger = new MapMerger(results[0], results[1]);
             merger.merge();
+
+            for (int i = 2; i < results.length; i++) {
+                merger.setTarget(results[i]);
+                merger.merge();
+            }
+            finalResult = merger.getResult();
+        }else{
+            finalResult = results[0];
         }
 
-        Result3D finalResult = merger.getResult();
         int sum = 0;
         for (int i = 0; i < finalResult.tuples.length; i++) {
             sum += finalResult.values[i];
@@ -92,8 +97,8 @@ public class HistogramBuilder {
         System.out.println("time elapsed (ms):" + (System.currentTimeMillis() - startTime));
         System.out.println("Testing");
 
-        HistogramPlotter test = new HistogramPlotter("Test for 3Dim hist", finalResult);
+        HistogramPlotter test = new HistogramPlotter("Histogram", finalResult);
 
-        test.plot(HistogramBuilder.MAPPER_3_DIM);
+        test.plot(MAPPER_TYPE, image.getWidth(), image.getHeight());
     }
 }

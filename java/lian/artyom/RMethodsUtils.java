@@ -9,7 +9,7 @@ import java.util.Map;
 public class RMethodsUtils
 {
 
-    public static RMethods.Result3D sumResult3D(RMethods.Result3D result)
+    public static RMethods.Result3D sumResult3D(RMethods.Result3D result, int width, int height)
     {
         Map<RMethods.Tuple, Integer> preFinalResult = new HashMap<>();
         for (int i = 0; i < result.values.length; i++)
@@ -36,13 +36,13 @@ public class RMethodsUtils
             }
         }
 
-        RMethods.Result3D finalResult3D = new RMethods.Result3D(finalResult.size());
+        RMethods.Result3D finalResult3D = new RMethods.Result3D(finalResult.entrySet().size());
         int i = 0;
-        for (Map.Entry<RMethods.Tuple, Integer> entry : preFinalResult.entrySet())
+        for (Map.Entry<RMethods.Tuple, Integer> entry : finalResult.entrySet())
         {
             finalResult3D.tuples[i] = entry.getKey();
-            finalResult3D.values[i++] = entry.getValue()/4;
+            finalResult3D.values[i++] = entry.getValue()/ ((width-1)*(height-1));
         }
-        return result;
+        return finalResult3D;
     }
 }

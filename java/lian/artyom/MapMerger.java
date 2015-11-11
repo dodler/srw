@@ -72,6 +72,5 @@ public class MapMerger {
             source.values[i++] = (Integer) entry.getValue();
         }
         prepareMerge();
-        System.out.println("merge finished:total number:" + source.tuples.length);
     }
 }

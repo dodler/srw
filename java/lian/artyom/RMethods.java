@@ -160,11 +160,12 @@ public class RMethods {
     //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_mono_2.png";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_mono.bmp";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_double.bmp";
-    private static final String imgPath = "/media/artem/385BE95714C3BE20/IdeaProjects/Custom/hist/srw/pic/test8bit.bmp";
+//    private static final String imgPath = "/media/artem/385BE95714C3BE20/IdeaProjects/Custom/hist/srw/pic/test8bit.bmp";
+    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test8bit.bmp";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/Volunteer_Park_Blues.jpg";
 
     public static void main(String[] args) throws IOException {
-//        new HistogramBuilder(50, imgPath).build(HistogramBuilder.MAPPER_1_DIM);
-        new HistogramBuilder(50, imgPath).build(HistogramBuilder.MAPPER_3_DIM);
+        new HistogramBuilder(1, imgPath).build(HistogramBuilder.MAPPER_1_DIM);
+//        new HistogramBuilder(1, imgPath).build(HistogramBuilder.MAPPER_3_DIM);
     }
 }

@@ -60,12 +60,6 @@ public class ImageMapper3Dim extends ImageMapper
             result.tuples[i] = (Tuple) entry.getKey();
             result.values[i++] = (Integer) entry.getValue();
         }
-
-        Result3D result2 = RMethodsUtils.sumResult3D(result);
-        for (int j = 0; j < result2.tuples.length; j++)
-        {
-            System.out.println(result2.tuples[j] + ", n=" + result2.values[j]);
-        }
     }
 
     @Override

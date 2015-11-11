@@ -87,11 +87,11 @@ public class HistogramPlotter extends ApplicationFrame
     {
         if (this.result == null)
         {
-            this.result = null;
+            this.result = result;
         }
     }
 
-    public void plot(byte TYPE)
+    public void plot(byte TYPE, int width, int height)
     {
         switch (TYPE)
         {
@@ -101,16 +101,16 @@ public class HistogramPlotter extends ApplicationFrame
             case HistogramBuilder.MAPPER_2_DIM:
                 throw new RuntimeException("not implemented yet");
             case HistogramBuilder.MAPPER_3_DIM:
-                build3DimHist();
+                build3DimHist(width, height);
         }
         pack();
         RefineryUtilities.centerFrameOnScreen(this);
         setVisible(true);
     }
 
-    private void build3DimHist()
+    private void build3DimHist(int width, int height)
     {
-        Result3D tempResult = RMethodsUtils.sumResult3D(result);
+        Result3D tempResult = RMethodsUtils.sumResult3D(result, width, height);
         this.result = tempResult;
         build1DimHist();
     }
@@ -120,13 +120,13 @@ public class HistogramPlotter extends ApplicationFrame
         Map<Tuple, Integer> resultMap = new HashMap<>();
         for (int i = 0; i < result.tuples.length; i++)
         {
-            if (resultMap.containsKey(result.tuples[i]))
-            {
-                resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
-            } else
-            {
+//            if (resultMap.containsKey(result.tuples[i]))
+//            {
+//                resultMap.put(result.tuples[i], resultMap.get(result.tuples[i]) + result.values[i]);
+//            } else
+//            {
                 resultMap.put(result.tuples[i], result.values[i]);
-            }
+//            }
         }
 
         XYSeriesCollection dataset = new XYSeriesCollection();

@@ -138,11 +138,13 @@ public class HistogramPlotter extends ApplicationFrame
         {
             colors.add(entry.getKey().z, entry.getValue());
         }
-
         dataset.addSeries(colors);
+
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
         setContentPane(chartPanel);
+        pack();
+        setVisible(true);
     }
 }

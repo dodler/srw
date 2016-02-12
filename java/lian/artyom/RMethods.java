@@ -170,8 +170,8 @@ public class RMethods {
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_mono.bmp";
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test_double.bmp";
 //    private static final String imgPath = "/media/artem/385BE95714C3BE20/IdeaProjects/Custom/hist/srw/pic/test8bit.bmp";
-    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test8bit.bmp";
-//    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/Volunteer_Park_Blues.jpg";
+//    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/test8bit.bmp";
+    private static final String imgPath = "/media/artem/385BE95714C3BE20/IdeaProjects/Custom/hist/srw/pic/test.bmp";
 
     public static void main(String[] args) throws IOException {
         HistogramBuilder builder = new HistogramBuilder(1, imgPath);

@@ -36,7 +36,7 @@ public class HistogramBuilder {
         this.MAPPER_TYPE = MAPPER_TYPE;
     }
 
-    public void build(byte MAPPER_TYPE) throws IOException {
+    public Result3D build(byte MAPPER_TYPE) throws IOException {
         this.MAPPER_TYPE = MAPPER_TYPE;
         long startTime = System.currentTimeMillis();
         image = ImageIO.read(new File(imgPath));
@@ -64,7 +64,7 @@ public class HistogramBuilder {
         System.out.println("mapping succesfully finished.");
 
 
-        if (!finished) return;
+        if (!finished) return null;
         else {
             for (int i = 0; i < threadSize; i++) {
                 results[i] = mappers[i].getResult();
@@ -98,7 +98,8 @@ public class HistogramBuilder {
         System.out.println("Testing");
 
         HistogramPlotter test = new HistogramPlotter("Histogram", finalResult);
-
+//
         test.plot(MAPPER_TYPE, image.getWidth(), image.getHeight());
+        return finalResult;
     }
 }

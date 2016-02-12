@@ -1,8 +1,12 @@
 package lian.artyom;
 
+import lian.artyom.sign.Sign;
+import lian.artyom.sign.impl.FirstAngleMoment;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Created by artem on 27.09.15.
@@ -29,7 +33,7 @@ public class RMethods {
      * class that contains one color tuple for 3dim histogram
      */
     public static final class Tuple extends Object {
-        int x, y, z; // here z is current color, z - neighbour by ax, y - neighbour - by ay, value is number of this color
+        public int x, y, z; // here z is current color, z - neighbour by ax, y - neighbour - by ay, value is number of this color
 
         @Override
         public int hashCode() {
@@ -114,11 +118,16 @@ public class RMethods {
     ;
 
     /**
-     * container for tuples
+     * container for histogram
+     * it contains array of tuples
+     * and count of each tuples
      */
     public static final class Result3D {
-        public Tuple[] tuples;
-        public int[] values;
+        // tuple contains 3 ints -
+        // color of current pixel (color possibly should be replaced with brightness )
+        //
+        public Tuple[] tuples; // single tuple
+        public int[] values; // count of tuple
 
         private Result3D() {
 
@@ -165,7 +174,15 @@ public class RMethods {
 //    private static final String imgPath = "/home/dodler/Документы/hist[R]/srw/pic/Volunteer_Park_Blues.jpg";
 
     public static void main(String[] args) throws IOException {
-        new HistogramBuilder(1, imgPath).build(HistogramBuilder.MAPPER_1_DIM);
+        HistogramBuilder builder = new HistogramBuilder(1, imgPath);
+//        Result3D result = builder.build(HistogramBuilder.MAPPER_3_DIM);
+        builder.build(HistogramBuilder.MAPPER_1_DIM);
+        System.out.println("result ready");
+//        Sign firstAngleMoment = new FirstAngleMoment();
+//        firstAngleMoment.calc(result);
+//        System.out.println("first angle");
+//        System.out.println(firstAngleMoment.getResult());
+
 //        new HistogramBuilder(1, imgPath).build(HistogramBuilder.MAPPER_3_DIM);
     }
 }
